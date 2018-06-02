@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}详情{% endblock %}
+
+{% block myCSS %}
+    <link href="{{ url_for('static', filename='css/detail.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block main %}
+    <div class="detail">
+        <h3 class="page-title">{{ question.title }}</h3>
+        <p class="detail-info">
+            <span class="detail-author">作者：{{ question.author.username }}</span>
+            <span class="detail-time">时间：{{ question.create_time }}</span>
+        </p>
+        <hr>
+        <p class="detail-content">
+            {{ question.content }}
+        </p>
+        <hr>
+        <h4>评论（0）：</h4>
+        <form action="{{ url_for('add_answer') }}" method="post">
+            <div class="form-group">
+                <input type="hidden" name="ques_id" value="{{ question.id }}">
+                <textarea name="answer_con" rows="2" class="form-control"></textarea>
+            </div>
+            <div class="form-group" style="overflow: hidden;">
+                <button class="btn btn-primary pull-right">提 交</button>
+            </div>
+        </form>
+
+        <ul class="comment-list">
+            {% for answer in question.answers %}
+            <li>
+                <div class="comment-info">
+                    <span class="comment-author">{{ answer.author.username }}</span>
+                    <span class="comment-time">{{ answer.create_time }}</span>
+                </div>
+                <p class="comment-con">{{ answer.content }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block myJS %}
+{% endblock%}
+

@@ -1,0 +1,27 @@
+.detail{
+    padding: 20px;
+}
+.detail-info{
+    text-align: center;
+}
+.detail-author{
+    margin-right: 10px;
+}
+.comment-list{
+    padding-left: 0;
+}
+.comment-list li{
+    list-style: none;
+    border-bottom: 1px solid #f3f3f3;
+}
+.comment-info{
+    color: #9b9b9b;
+    line-height: 30px;
+    overflow: hidden;
+}
+.comment-author{
+    font-size: 16px;
+}
+.comment-time{
+    float: right;
+}

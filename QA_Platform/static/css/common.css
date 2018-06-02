@@ -1,0 +1,16 @@
+body{
+    background-color: #f3f3f3;
+}
+.main{
+    width: 800px;
+    background-color: #ffffff;
+    overflow: hidden;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-title{
+    text-align: center;
+    margin: 15px 0;
+}
+
