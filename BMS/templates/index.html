@@ -9,7 +9,8 @@
 <!-- 引用左边和主体部分 -->
 	<frameset rows="100*" cols="220,*" scrolling="No" framespacing="0" frameborder="no" border="0">
 		<frame src="{{ url_for('index.left') }}" name="leftmenu" id="mainFrame" title="mainFrame">
-		<frame src="grade.html" name="main" scrolling="yes" noresize="noresize" id="rightFrame" title="rightFrame">
+{#		{{ url_for('grade.list') }}#}
+        <frame src="" name="main" scrolling="yes" noresize="noresize" id="rightFrame" title="rightFrame">
 	</frameset>
 </frameset>
 </html>

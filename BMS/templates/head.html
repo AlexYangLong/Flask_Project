@@ -15,7 +15,7 @@
 			<img class="headLogo" src="/static/img/logLOGO.png"/>	
 		</div>
 		<div class="headR">
-			<span style="color:#FFF">欢迎：{{ name }}</span> <a href="head2.html" rel="external">【退出】</a>
+			<span style="color:#FFF">欢迎：{{ name }}</span> <a target="_parent" href="{{ url_for('auth.logout') }}" rel="external">【退出】</a>
 		</div>
 	</div>
 </body>

@@ -13,7 +13,7 @@
 	<div class="container">
 
 		<div class="leftsidebar_box">
-			<a href="main.html" target="main"><div class="line">
+			<a href="" target="main"><div class="line">
 					<img src="/static/img/coin01.png" />&nbsp;&nbsp;首页
 				</div></a>
 			<dl class="system_log">
@@ -71,7 +71,7 @@
 				</dd>
 				<dd>
 					<img class="coin11" src="/static/img/coin111.png" /><img class="coin22"
-						src="/static/img/coin222.png" /><a class="cks" href="permissions.html"
+						src="/static/img/coin222.png" /><a class="cks" href="{{ url_for('auth.auth_list') }}"
 						target="main">权限列表</a><img class="icon5" src="/static/img/coin21.png" />
 				</dd>
 				<dd>
@@ -115,7 +115,7 @@
 				</dd>
 				<dd>
 					<img class="coin11" src="/static/img/coin111.png" /><img class="coin22"
-						src="/static/img/coin222.png" /><a class="cks">退出</a><img
+						src="/static/img/coin222.png" /><a class="cks" target="_parent" href="{{ url_for('auth.logout') }}">退出</a><img
 						class="icon5" src="/static/img/coin21.png" />
 				</dd>
 			</dl>
