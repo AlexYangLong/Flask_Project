@@ -2,6 +2,7 @@ import os
 from flask import Flask
 
 from bms.auth_views import auth_blueprint
+from bms.authority_views import authority_blueprint
 from bms.db_views import db_blueprint
 from bms.index_views import index_blueprint
 from test.test import test_blueprint
@@ -31,5 +32,6 @@ def create_app():
     app.register_blueprint(blueprint=db_blueprint, url_prefix='/db')
     app.register_blueprint(blueprint=auth_blueprint, url_prefix='/auth')
     app.register_blueprint(blueprint=index_blueprint, url_prefix='/index')
+    app.register_blueprint(blueprint=authority_blueprint, url_prefix='/authority')
 
     return app

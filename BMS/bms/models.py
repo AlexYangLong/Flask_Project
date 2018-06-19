@@ -5,7 +5,17 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-class Admin(db.Model):
+class BaseModel(object):
+    def add_update(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+class Admin(BaseModel, db.Model):
     __tablename__ = 'admin'
 
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
@@ -31,7 +41,7 @@ class Admin(db.Model):
         }
 
 
-class Authority(db.Model):
+class Authority(BaseModel, db.Model):
     __tablename__ = 'authority'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -53,7 +63,7 @@ role_auth = db.Table('role_auth',
                      )
 
 
-class Role(db.Model):
+class Role(BaseModel, db.Model):
     __tablename__ = 'role'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

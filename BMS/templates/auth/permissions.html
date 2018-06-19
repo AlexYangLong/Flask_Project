@@ -47,16 +47,16 @@
 </div>
 
 <ul id="PageNum">
-<li><a href="#">首页</a></li>
-<li><a href="#">上一页</a></li>
-<li><a href="#">1</a></li>
-<li><a href="#">2</a></li>
-<li><a href="#">3</a></li>
-<li><a href="#">4</a></li>
-<li><a href="#">5</a></li>
-<li><a href="#">6</a></li>
-<li><a href="#">下一页</a></li>
-<li><a href="#">尾页</a></li>
+{#<li><a href="#">首页</a></li>#}
+{#<li><a href="#">上一页</a></li>#}
+{#<li><a href="#">1</a></li>#}
+{#<li><a href="#">2</a></li>#}
+{#<li><a href="#">3</a></li>#}
+{#<li><a href="#">4</a></li>#}
+{#<li><a href="#">5</a></li>#}
+{#<li><a href="#">6</a></li>#}
+{#<li><a href="#">下一页</a></li>#}
+{#<li><a href="#">尾页</a></li>#}
 </ul>
 
 </div>
@@ -65,12 +65,38 @@
 </html>
 <script type="text/javascript">
     $(function () {
-       $.getJSON('', function (data) {
+       $.getJSON('/authority_api/?pn=1', function (data) {
            if(data.code == '200'){
+               console.log(data)
                datas = data.data_list;
+               data = '';
                for(var i=0;i<datas.length;i++){
-
+                    data += '<tr>' +
+                        '<td>'+((parseInt(data.page_now) - 1)*parseInt(data.page_size)+(i+1))+'</td>' +
+                        '<td>'+datas[i].name+'</td>' +
+                        '<td>操作</td>' +
+                        '</tr>';
                }
+               $('#table').append(data);
+
+               var pageList = '';
+               if(data.page_now > 1){
+                   pageList += '<li><a href=\"/auth_api/authority/?pn='+ (data.page_now-1) +'\">上一页</a></li>';
+               }
+
+               for(var i=1;i<=data.page_total;i++){
+                   if(i == data.page_now) {
+                       pageList += '<li><a href="/auth_api/authority/?pn='+ i +'">'+ i +'</a></li>';
+                   }else {
+                       pageList += '<li><a href="/auth_api/authority/?pn='+ i +'">\'+ i +\'</a></li>';
+                   }
+               }
+
+               if (data.page_now < data.page_total){
+                   pageList += '<li><a href=\"/auth_api/authority/?pn='+ (data.page_now+1) +'\">下一页</a></li>';
+               }
+
+               $('#PageNum').append(pageList);
            }
        });
     });
