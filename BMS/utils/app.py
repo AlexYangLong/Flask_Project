@@ -4,7 +4,11 @@ from flask import Flask
 from bms.auth_views import auth_blueprint
 from bms.authority_views import authority_blueprint
 from bms.db_views import db_blueprint
+from bms.grade_views import grade_blueprint
 from bms.index_views import index_blueprint
+from bms.role_views import role_blueprint
+from bms.student_views import student_blueprint
+from bms.user_views import user_blueprint
 from test.test import test_blueprint
 from utils.config import DevConfig
 from utils.exts import init_exts
@@ -33,5 +37,9 @@ def create_app():
     app.register_blueprint(blueprint=auth_blueprint, url_prefix='/auth')
     app.register_blueprint(blueprint=index_blueprint, url_prefix='/index')
     app.register_blueprint(blueprint=authority_blueprint, url_prefix='/authority')
+    app.register_blueprint(blueprint=role_blueprint, url_prefix='/role')
+    app.register_blueprint(blueprint=grade_blueprint, url_prefix='/grade')
+    app.register_blueprint(blueprint=student_blueprint, url_prefix='/student')
+    app.register_blueprint(blueprint=user_blueprint, url_prefix='/user')
 
     return app

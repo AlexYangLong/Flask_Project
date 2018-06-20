@@ -36,8 +36,10 @@ class Admin(BaseModel, db.Model):
             'id': self.id,
             'username': self.username,
             'name': self.name,
-            'password': '******',
-            'create_time': self.create_time.strftime('%Y-%m-%d %X')
+            'password': self.password,
+            'create_time': self.create_time.strftime('%Y-%m-%d %X'),
+            'role_id': self.role_id,
+            'role': Role.query.get(self.role_id).name
         }
 
 
@@ -79,4 +81,39 @@ class Role(BaseModel, db.Model):
             'id': self.id,
             'name': self.name,
             'create_time': self.create_time.strftime('%Y-%m-%d %X')
+        }
+
+
+class Student(BaseModel, db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(20), nullable=False)
+    gender = db.Column(db.Boolean, nullable=False, default=True)
+    create_time = db.Column(db.DateTime, default=datetime.now)
+    grade_id = db.Column(db.Integer, db.ForeignKey('grade.id'), nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'gender': self.gender,
+            'create_time': self.create_time.strftime('%Y-%m-%d %X'),
+            'grade_id': self.grade_id
+        }
+
+
+class Grade(BaseModel, db.Model):
+    __tablename__ = 'grade'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(20), nullable=False)
+    create_time = db.Column(db.DateTime, default=datetime.now)
+
+    students = db.relationship('Student', backref='grade', lazy='dynamic')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'create_time': self.create_time.strftime('%Y-%m-%d %X'),
+            'students': [stu.to_dict() for stu in self.students]
         }

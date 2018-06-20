@@ -3,15 +3,31 @@ from flask_restful import Resource
 
 from bms.models import Authority
 from utils import status_code
+from utils.decorators import login_required
 from utils.exts import api
 
 authority_blueprint = Blueprint('authority', __name__)
 
 
 @authority_blueprint.route('/auth_list/')
+@login_required
 def auth_list():
     if request.method == 'GET':
-        return render_template('auth/permissions.html')
+        return render_template('authority/permissions.html')
+
+
+@authority_blueprint.route('/auth_edit/')
+@login_required
+def auth_edit():
+    if request.method == 'GET':
+        return render_template('authority/addpermission.html')
+
+
+@authority_blueprint.route('/auth_add/')
+@login_required
+def auth_add():
+    if request.method == 'GET':
+        return render_template('authority/addpermission.html')
 
 
 class AuthorityApi(Resource):
@@ -24,8 +40,8 @@ class AuthorityApi(Resource):
 
             res = status_code.SUCCESS
             res['page_now'] = pn
-            res['page_size'] = ps,
-            res['page_total'] = paginations.pages,
+            res['page_size'] = ps
+            res['page_total'] = paginations.pages
             res['data_list'] = [auth.to_dict() for auth in auths]
             return jsonify(res)
 
@@ -37,15 +53,14 @@ class AuthorityApi(Resource):
 
         return jsonify(status_code.AUTHORITY_NOT_EXISTS)
 
-    def post(self):
-        aid = request.form.get('aid')
+    def post(self, aid=None):
         name = request.form.get('name')
 
         if not name:
-            return jsonify(status_code.AUTHORITY_PARAMS_ERROR)
+            return jsonify(status_code.PARAMS_NOT_COMPLETE)
 
         if not aid:
-            auth = Authority.query.filter_by(name=name)
+            auth = Authority.query.filter_by(name=name).first()
             if auth:
                 return jsonify(status_code.AUTHORITY_EXISTED)
 
@@ -70,7 +85,7 @@ class AuthorityApi(Resource):
             auth.delete()
             return jsonify(status_code.SUCCESS)
 
-        return jsonify(status_code.AUTHORITY_PARAMS_ERROR)
+        return jsonify(status_code.PARAMS_NOT_COMPLETE)
 
 
-api.add_resource(AuthorityApi, '/authority_api/', '/authority_api/<int:aid>/')
+api.add_resource(AuthorityApi, '/api/authority/', '/api/authority/<int:aid>/')
