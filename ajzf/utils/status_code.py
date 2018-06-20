@@ -12,3 +12,6 @@ USER_NOT_EXISTS = {'code': 1006, 'msg': '用户名不存在'}
 USER_PASSWORD_ERROR = {'code': 1007, 'msg': '密码错误'}
 
 USER_IMAGE_FORMAT_ERROR = {'code': 1008, 'msg': '上传图片格式不正确'}
+
+USER_AUTH_DATA_NOT_NULL = {'code': 1009, 'msg': '实名认证信息不能为空'}
+USER_AUTH_IDCARD_INVALID = {'code': 1010, 'msg': '身份证号格式错误'}

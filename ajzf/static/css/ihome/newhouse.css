@@ -96,6 +96,7 @@ body {
 }
 .popup_con{display:none;}
 .popup{width:300px;height:150px;position:fixed;
+    border:1px solid #dddddd;border-top:2px solid #00bc6f;background-color:#f7f7f7;
     left:50%;
     margin-left:-150px;
     top:50%;

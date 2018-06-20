@@ -2,7 +2,7 @@ function showSuccessMsg() {
     $('.popup_con').fadeIn('fast', function() {
         setTimeout(function(){
             $('.popup_con').fadeOut('fast',function(){}); 
-        },1000) 
+        },1500)
     });
 }
 
@@ -24,36 +24,62 @@ $(document).ready(function() {
         $('#avatar-error').hide();
     });
 
+    // 上传文件 方法1：
     $('#form-avatar').submit(function (e) {
         e.preventDefault();
-
-        var imageForm = new FormData();
-        imageForm.append("avatar", $("avatar")[0]);
-
-        $.ajax({
+        $(this).ajaxSubmit({
             url: '/user/avatar/',
             type: 'patch',
-            data: new FormData($('#form-avatar')[0]),
             dataType: 'json',
-            async: true,
-            cashe: false,
-            contentType:false,
-            processData:false,
             success: function (data) {
                 if(data.code == '200'){
-                    alert('成功');
+                    $('.popup p').html(data.msg);
+                    showSuccessMsg();
                     $('#user-avatar').attr({'src': '/static/' + data.img_url});
                 }else{
-                    alert(data.msg);
+                    $('.popup p').html(data.msg);
+                    showSuccessMsg();
                 }
             },
             error: function (error) {
-                $('#avatar-error span').html('请求失败！');
-                $('#avatar-error').show();
+                $('.popup p').html(data.msg);
+                showSuccessMsg();
                 console.log(error);
             }
         });
     });
+
+    // 上传文件 方法2：
+    // $('#form-avatar').submit(function (e) {
+    //     e.preventDefault();
+    //
+    //     var imageForm = new FormData();
+    //     imageForm.append("avatar", $("avatar")[0]);
+    //
+    //     $.ajax({
+    //         url: '/user/avatar/',
+    //         type: 'patch',
+    //         data: new FormData($('#form-avatar')[0]),
+    //         dataType: 'json',
+    //         async: true,
+    //         cashe: false,
+    //         contentType:false,
+    //         processData:false,
+    //         success: function (data) {
+    //             if(data.code == '200'){
+    //                 alert('成功');
+    //                 $('#user-avatar').attr({'src': '/static/' + data.img_url});
+    //             }else{
+    //                 alert(data.msg);
+    //             }
+    //         },
+    //         error: function (error) {
+    //             $('#avatar-error span').html('请求失败！');
+    //             $('#avatar-error').show();
+    //             console.log(error);
+    //         }
+    //     });
+    // });
 
     $('#user-name').focus(function () {
         $('#name-error').hide();
@@ -77,16 +103,17 @@ $(document).ready(function() {
             dataType: 'json',
             success: function (data) {
                 if(data.code == '200'){
-                    alert('成功');
+                    $('.popup p').html(data.msg);
+                    showSuccessMsg();
                     $('#user-name').val(username);
                 }else{
-                    $('#name-error span').html(data.msg);
-                    $('#name-error').show();
+                    $('.popup p').html(data.msg);
+                    showSuccessMsg();
                 }
             },
             error: function (error) {
-                $('#name-error span').html('请求失败！');
-                $('#name-error').show();
+                $('.popup p').html(data.msg);
+                showSuccessMsg();
                 console.log(error);
             }
         });

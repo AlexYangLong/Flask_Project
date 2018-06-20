@@ -2,7 +2,7 @@ import re
 
 import os
 from flask import Blueprint, request, render_template, jsonify, session, redirect, url_for
-from sqlalchemy import or_, and_
+from sqlalchemy import or_
 
 from app.models import User, db
 from utils import status_code
@@ -156,4 +156,49 @@ def username():
     except BaseException as e:
         print(e)
         db.session.rollback()
+        return jsonify(status_code.DATABASE_ERROR)
+
+
+@user_blueprint.route('/authenticate/', methods=['GET'])
+@login_required
+def authenticate():
+    return render_template('auth.html')
+
+
+@user_blueprint.route('/authenticate/', methods=['PATCH'])
+@login_required
+def user_authenticate():
+    real_name = request.form.get('real_name')
+    id_card = request.form.get('id_card')
+
+    # 验证数据不为空
+    if not all([real_name, id_card]):
+        return jsonify(status_code.USER_AUTH_DATA_NOT_NULL)
+    # 简单验证身份证号
+    if not re.match(r'^[1-9]\d{17}$', id_card):
+        return jsonify(status_code.USER_AUTH_IDCARD_INVALID)
+
+    try:
+        user = User.query.filter_by(id=session['user_id']).first()
+        user.id_name = real_name
+        user.id_card = id_card
+        user.add_update()
+
+        return jsonify(status_code.SUCCESS)
+    except BaseException as e:
+        print(e)
+        db.session.rollback()
+        return jsonify(status_code.DATABASE_ERROR)
+
+
+@user_blueprint.route('/auth_info/', methods=['GET'])
+@login_required
+def auth_info():
+    try:
+        user = User.query.filter_by(id=session['user_id']).first()
+        res = status_code.SUCCESS
+        res['data'] = user.to_auth_dict()
+        return jsonify(res)
+    except BaseException as e:
+        print(e)
         return jsonify(status_code.DATABASE_ERROR)
