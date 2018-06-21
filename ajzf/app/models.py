@@ -29,8 +29,8 @@ class User(BaseModel, db.Model):
     id_name = db.Column(db.String(30))  # 身份证姓名
     id_card = db.Column(db.String(18), unique=True)  # 身份证ID
 
-    # houses = db.relationship('House', backref='user')
-    # orders = db.relationship('Order', backref='user')
+    houses = db.relationship('House', backref='user')
+    orders = db.relationship('Order', backref='user')
 
     @property
     def password(self):
@@ -116,7 +116,7 @@ class House(BaseModel, db.Model):
             'user_name': self.user.name,
             'title': self.title,
             'price': self.price,
-            'address': self.area.name+self.address,
+            'address': self.area.name + self.address,
             'room_count': self.room_count,
             'acreage': self.acreage,
             'unit': self.unit,
@@ -205,6 +205,7 @@ class Order(BaseModel, db.Model):
     def to_dict(self):
         return {
             'order_id': self.id,
+            'user_name': self.user.name,
             'house_title': self.house.title,
             'image': self.house.index_image_url if self.house.index_image_url else '',
             'create_date': self.create_time.strftime('%Y-%m-%d'),

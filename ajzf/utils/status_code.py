@@ -15,3 +15,10 @@ USER_IMAGE_FORMAT_ERROR = {'code': 1008, 'msg': '上传图片格式不正确'}
 
 USER_AUTH_DATA_NOT_NULL = {'code': 1009, 'msg': '实名认证信息不能为空'}
 USER_AUTH_IDCARD_INVALID = {'code': 1010, 'msg': '身份证号格式错误'}
+
+# 房源
+HOUSE_PARAMS_NOT_COMPLETE = {'code': 1101, 'msg': '请求参数不完整'}
+
+# 订单
+ORDER_PARAMS_NOT_COMPLETE = {'code': 1201, 'msg': '请求参数不完整'}
+ORDER_TIME_PARAMS_ERROR = {'code': 1202, 'msg': '时间参数错误'}

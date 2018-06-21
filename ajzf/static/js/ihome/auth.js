@@ -10,7 +10,7 @@ $(document).ready(function () {
 
     $.getJSON('/user/auth_info/', function (data) {
         if(data.code == '200'){
-            if(data.data.id_card != ''){
+            if(data.data.id_card){
                 $('#real_name').val(data.data.id_name);
                 $('#real_name').attr({'readonly': 'readonly'});
                 $('#id_card').val(data.data.id_card);

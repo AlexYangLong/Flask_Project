@@ -51,8 +51,6 @@ $(document).ready(function(){
             if(obj[k].checked)
                 check_val += obj[k].value + ',';
         }
-        // alert(check_val);
-
 
         var info = {
             'title': title,
@@ -77,6 +75,7 @@ $(document).ready(function(){
             dataType: 'json',
             success: function (data) {
                 if(data.code == '200'){
+                    $('#house-id').val(data.data.id);
                     $('.popup p').html(data.msg);
                     showSuccessMsg();
                     $('#form-house-info').hide();
@@ -87,9 +86,33 @@ $(document).ready(function(){
                 }
             },
             error: function (error) {
+                $('.popup p').html('请求失败！');
+                showSuccessMsg();
                 console.log(error);
             }
         });
 
+    });
+
+    $('#form-house-image').submit(function (e) {
+        e.preventDefault();
+
+        $(this).ajaxSubmit({
+            url: '/house/upload_image/',
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                $('.popup p').html(data.msg);
+                showSuccessMsg();
+                if(data.code == '200'){
+                    window.parent.location.href = '/house/my_house/';
+                }
+            },
+            error: function (error) {
+                $('.popup p').html('请求失败！');
+                showSuccessMsg();
+                console.log(error);
+            }
+        });
     });
 })

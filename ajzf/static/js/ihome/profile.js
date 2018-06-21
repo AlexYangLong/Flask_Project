@@ -15,7 +15,9 @@ $(document).ready(function() {
 
     $.getJSON('/user/get_name_img/', function (data) {
         if(data.code == '200'){
-            $('#user-avatar').attr({'src': '/static/' + data.data.avatar});
+            if(data.data.avatar) {
+                $('#user-avatar').attr({'src': '/static/upload/' + data.data.avatar});
+            }
             $('#user-name').val(data.data.name);
         }
     });
@@ -35,14 +37,14 @@ $(document).ready(function() {
                 if(data.code == '200'){
                     $('.popup p').html(data.msg);
                     showSuccessMsg();
-                    $('#user-avatar').attr({'src': '/static/' + data.img_url});
+                    $('#user-avatar').src = '/static/upload/' + data.img_url;
                 }else{
                     $('.popup p').html(data.msg);
                     showSuccessMsg();
                 }
             },
             error: function (error) {
-                $('.popup p').html(data.msg);
+                $('.popup p').html('请求失败！');
                 showSuccessMsg();
                 console.log(error);
             }

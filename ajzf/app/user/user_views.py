@@ -6,7 +6,7 @@ from sqlalchemy import or_
 
 from app.models import User, db
 from utils import status_code
-from utils.common import UPLOAD_DIR
+from utils import common
 from utils.decorators import login_required
 
 user_blueprint = Blueprint('user', __name__)
@@ -116,17 +116,22 @@ def avatar():
     # 验证图片格式
     if not re.match(r'image/.*', file.mimetype):
         return jsonify(status_code.USER_IMAGE_FORMAT_ERROR)
+
     # 保存
+    file_dir = os.path.join(common.UPLOAD_DIR, 'avatar/' + str(user_id))
+    if not os.path.exists(file_dir):
+        os.mkdir(file_dir)
     file_name = str(user_id) + '.' + file.filename.split('.')[-1]
-    img_path = os.path.join(UPLOAD_DIR, 'upload/' + file_name)
+    img_path = os.path.join(file_dir, file_name)
     file.save(img_path)
 
     try:
         user = User.query.filter_by(id=user_id).first()
-        user.avatar = os.path.join('upload', file_name)
+        user.avatar = os.path.join('avatar/' + str(user_id), file_name)
 
         user.add_update()
         res = status_code.SUCCESS
+        res['user_id'] = user.id
         res['img_url'] = user.avatar
         return jsonify(res)
     except BaseException as e:

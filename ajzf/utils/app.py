@@ -2,6 +2,7 @@ import os
 from flask import Flask
 
 from app.house.house_views import house_blueprint
+from app.order.order_views import book_blueprint
 from app.user.user_views import user_blueprint
 from utils.common import BASE_DIR
 from utils.config import DevConfig
@@ -30,5 +31,6 @@ def create_app():
     # 注册蓝图
     app.register_blueprint(user_blueprint, url_prefix='/user')
     app.register_blueprint(house_blueprint, url_prefix='/house')
+    app.register_blueprint(book_blueprint, url_prefix='/book')
 
     return app

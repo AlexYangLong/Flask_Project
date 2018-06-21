@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head> 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>爱家</title>
+{% extends 'base.html' %}
+
+{% block title %}爱家{% endblock %}
+
+{% block CSS %}
     <link href="/static/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="/static/css/reset.css" rel="stylesheet">
@@ -12,8 +10,9 @@
     <link href="/static/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
     <link href="/static/css/ihome/main.css" rel="stylesheet">
     <link href="/static/css/ihome/index.css" rel="stylesheet">
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
     <div class="container">
         <div class="top-bar">
             <img class="logo fl" src="/static/images/logo@128x59.png">
@@ -114,7 +113,9 @@
             <p><span><i class="fa fa-copyright"></i></span>爱家租房&nbsp;&nbsp;享受家的温馨</p>
         </div>
     </div>
-    
+{% endblock %}
+
+{% block JS %}
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="/static/plugins/swiper/js/swiper.jquery.min.js"></script>
@@ -122,5 +123,4 @@
     <script src="/static/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
     <script src="/static/js/template.js"></script>
     <script src="/static/js/ihome/index.js"></script>
-</body>
-</html>
+{% endblock %}

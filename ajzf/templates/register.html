@@ -44,7 +44,7 @@
             <div class="error-msg" id="password2-err"><i class="fa fa-exclamation-circle"></i><span></span></div>
             <button type="button" id="btn-reg" class="btn btn-lg btn-theme btn-block">立即注册</button>
             <div class="result-msg" id="result"><i class="fa fa-exclamation-circle"></i><span></span></div>
-            <p class="login-a">已有账号，<a href="/login.html">立即登陆</a></p>
+            <p class="login-a">已有账号，<a href="{{ url_for('user.login') }}">立即登陆</a></p>
         </form>
     </div>
 {% endblock %}
