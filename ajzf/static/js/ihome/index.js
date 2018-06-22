@@ -44,7 +44,7 @@ function setEndDate() {
 }
 
 function goToSearchPage(th) {
-    var url = "/search.html?";
+    var url = "/index/search/?";
     url += ("aid=" + $(th).attr("area-id"));
     url += "&";
     var areaName = $(th).attr("area-name");
@@ -84,4 +84,32 @@ $(document).ready(function(){
         var date = $(this).datepicker("getFormattedDate");
         $("#start-date-input").val(date);
     });
-})
+
+    $.getJSON('/user/login_info/', function (data) {
+        if(data.code == '200'){
+            if(data.result){
+                $('.register-login').html('<span style=\"font-size: 18px; margin-right: 10px;\">'+data.data.name + '</span> <a class="btn top-btn btn-theme" href="/user/logout/">注销</a>');
+            }else {
+                $('.register-login').append('<a class=\"btn top-btn btn-theme\" href=\"/user/register/\">注册</a>');
+                $('.register-login').append('<a class=\"btn top-btn btn-theme\" href=\"/user/login/\">登录</a>');
+            }
+        }
+    });
+
+    $.getJSON('/house/area_facility/', function (data) {
+        if(data.code == '200'){
+            for(var i=0;i<data.area_list.length;i++){
+                $('.area-list').append('<a href="javascript:;" area-id=\"'+data.area_list[i].id+'\">'+data.area_list[i].name+'</a>');
+            }
+
+            $('.area-list a').on('click', function (e) {
+                e.preventDefault();
+                $('#area-btn').html($(this).html());
+                $('#area-btn').attr({'area_id': $(this).attr('area-id')});
+                $('.search-btn').attr({'area-id': $(this).attr('area-id'), 'area-name': $(this).html()});
+                $('#area-modal').modal('hide');
+            });
+        }
+    });
+
+});

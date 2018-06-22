@@ -16,7 +16,7 @@
         <div class="top-bar">
             <div class="nav-bar">
                 <h3 class="page-title">我的爱家</h3>
-                <a class="nav-btn fl" href="/"><span><i class="fa fa-angle-left fa-2x"></i></span></a>
+                <a class="nav-btn fl" href="{{ url_for('index.index') }}"><span><i class="fa fa-angle-left fa-2x"></i></span></a>
             </div>
         </div>
         <div class="menus-con">
@@ -36,7 +36,7 @@
                 </li>
                 <li>
                     <div class="menu-title menu-radius">
-                        <a href="/orders.html"><h3>我的订单</h3></a>
+                        <a href="{{ url_for('book.my_orders') }}"><h3>我的订单</h3></a>
                     </div>
                 </li>
                 <li>
@@ -51,7 +51,7 @@
                 </li>
                 <li>
                     <div class="menu-title menu-radius">
-                        <a href="/lorders.html"><h3>客户订单</h3></a>
+                        <a href="{{ url_for('book.custom_orders') }}"><h3>客户订单</h3></a>
                     </div>
                 </li>
                 <li>

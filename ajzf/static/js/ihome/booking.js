@@ -89,7 +89,7 @@ $(document).ready(function(){
                     $('.popup p').html('下单成功！');
                     showErrorMsg();
                     //跳转到订单页面
-                    //window.parent.location.href = '';
+                    window.parent.location.href = '/book/my_orders/';
                 }else {
                     $('.popup p').html(data.msg);
                     showErrorMsg();

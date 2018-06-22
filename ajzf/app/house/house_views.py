@@ -2,6 +2,7 @@ import re
 
 import os
 from flask import Blueprint, render_template, jsonify, request, session
+from sqlalchemy import and_
 
 from app.models import Area, Facility, House, db, HouseImage, Order
 from utils import status_code, common
@@ -23,7 +24,7 @@ def new_house():
 
 
 @house_blueprint.route('/area_facility/', methods=['GET'])
-@login_required
+# @login_required
 def area_facility():
     areas = Area.query.all()
     facilities = Facility.query.all()
@@ -143,7 +144,7 @@ def house_info(hid):
         return jsonify(status_code.HOUSE_PARAMS_NOT_COMPLETE)
     try:
         house = House.query.filter_by(id=hid).first()
-        comments = Order.query.filter_by(house_id=hid).all()
+        comments = Order.query.filter_by(house_id=hid, status='COMPLETE').all()
         res = status_code.SUCCESS
         res['data'] = house.to_full_dict()
         res['comments'] = [comment.to_dict() for comment in comments]

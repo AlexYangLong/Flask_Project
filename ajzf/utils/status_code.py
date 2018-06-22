@@ -22,3 +22,4 @@ HOUSE_PARAMS_NOT_COMPLETE = {'code': 1101, 'msg': '请求参数不完整'}
 # 订单
 ORDER_PARAMS_NOT_COMPLETE = {'code': 1201, 'msg': '请求参数不完整'}
 ORDER_TIME_PARAMS_ERROR = {'code': 1202, 'msg': '时间参数错误'}
+ORDER_STATUS_DATA_ERROR = {'code': 1203, 'msg': '订单状态参数错误'}

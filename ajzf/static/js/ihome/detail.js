@@ -49,19 +49,19 @@ $(document).ready(function(){
             for(var i=0;i<data.comments.length;i++){
                 $('.house-comment-list').append('<li><p>'+data.comments[i].user_name+'<span class=\"fr\">'+data.comments[i].create_date+'</span></p><p>'+data.comments[i].comment+'</p></li>');
             }
-            // mySwiper();
+
+            var mySwiper = new Swiper ('.swiper-container', {
+                loop: true,
+                autoplay: 2000,
+                autoplayDisableOnInteraction: false,
+                pagination: '.swiper-pagination',
+                paginationType: 'fraction'
+            });
+
             $(".book-house").attr({'href': '/book/booking/?hid='+house.id})
             $(".book-house").show();
         }else {
             alert(data.msg);
         }
-    });
-
-    var mySwiper = new Swiper ('.swiper-container', {
-        loop: true,
-        autoplay: 2000,
-        autoplayDisableOnInteraction: false,
-        pagination: '.swiper-pagination',
-        paginationType: 'fraction'
     });
 });

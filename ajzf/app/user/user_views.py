@@ -207,3 +207,17 @@ def auth_info():
     except BaseException as e:
         print(e)
         return jsonify(status_code.DATABASE_ERROR)
+
+
+@user_blueprint.route('/login_info/', methods=['GET'])
+def login_info():
+    if session.get('user_id'):
+        user = User.query.filter_by(id=session.get('user_id')).first()
+        res = status_code.SUCCESS
+        res['result'] = True
+        res['data'] = user.to_basic_dict()
+        return jsonify(res)
+
+    res = status_code.SUCCESS
+    res['result'] = False
+    return jsonify(res)
