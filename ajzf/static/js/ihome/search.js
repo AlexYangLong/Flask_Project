@@ -24,6 +24,7 @@ function updateFilterDateDisplay() {
     } else {
         $filterDateTitle.html("入住日期");
     }
+    // updateHouseData('renew');
 }
 
 
@@ -42,9 +43,16 @@ function updateHouseData(action) {
         sd:startDate,
         ed:endDate,
         sk:sortKey,
-        p:next_page
+        pn:next_page
     };
     //发起ajax请求，获取数据，并显示在模板中
+    $.getJSON('/index/get_houses/',params, function (data) {
+        if(data.code == '200'){
+            console.log(data.data_list)
+            var html = template('house-list-temp', {houses: data.data_list});
+            $('.house-list').html(html);
+        }
+    });
 }
 
 $(document).ready(function(){
@@ -55,32 +63,33 @@ $(document).ready(function(){
     $("#end-date").val(endDate);
     updateFilterDateDisplay();
     var areaName = queryData["aname"];
+    // var areaId = queryData["aid"];
     if (!areaName) areaName = "位置区域";
     $(".filter-title-bar>.filter-title").eq(1).children("span").eq(0).html(areaName);
 
 
     // 获取筛选条件中的城市区域信息
-    $.get("/api/v1_0/areas", function(data){
-        if (data.errno == 0) {
+    $.get("/house/area_facility/", function(data){
+        if (data.code == '200') {
             // 用户从首页跳转到这个搜索页面时可能选择了城区，所以尝试从url的查询字符串参数中提取用户选择的城区
             var areaId = queryData["aid"];
             // 如果提取到了城区id的数据
             if (areaId) {
                 // 遍历从后端获取到的城区信息，添加到页面中
-                for (var i=0; i<data.data.areas.length; i++) {
+                for (var i=0; i<data.area_list.length; i++) {
                     // 对于从url查询字符串参数中拿到的城区，在页面中做高亮展示
                     // 后端获取到城区id是整型，从url参数中获取到的是字符串类型，所以将url参数中获取到的转换为整型，再进行对比
                     areaId = parseInt(areaId);
-                    if (data.data.areas[i].aid == areaId) {
-                        $(".filter-area").append('<li area-id="'+ data.data.areas[i].aid+'" class="active">'+ data.data.areas[i].aname+'</li>');
+                    if (data.area_list[i].id == areaId) {
+                        $(".filter-area").append('<li area-id="'+ data.area_list[i].id+'" class="active">'+ data.area_list[i].name+'</li>');
                     } else {
-                        $(".filter-area").append('<li area-id="'+ data.data.areas[i].aid+'">'+ data.data.areas[i].aname+'</li>');
+                        $(".filter-area").append('<li area-id="'+ data.area_list[i].id+'">'+ data.area_list[i].name+'</li>');
                     }
                 }
             } else {
                 // 如果url参数中没有城区信息，不需要做额外处理，直接遍历展示到页面中
-                for (var i=0; i<data.data.areas.length; i++) {
-                    $(".filter-area").append('<li area-id="'+ data.data.areas[i].aid+'">'+ data.data.areas[i].aname+'</li>');
+                for (var i=0; i<data.area_list.length; i++) {
+                    $(".filter-area").append('<li area-id="'+ data.area_list[i].id+'">'+ data.area_list[i].name+'</li>');
                 }
             }
             // 在页面添加好城区选项信息后，更新展示房屋列表信息

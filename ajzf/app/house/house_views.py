@@ -152,12 +152,3 @@ def house_info(hid):
     except BaseException as e:
         print(e)
         return jsonify(status_code.DATABASE_ERROR)
-
-
-@house_blueprint.route('/index/')
-def index():
-    return render_template('index.html')
-
-@house_blueprint.route('/lorder/')
-def lorder():
-    return render_template('lorders.html')

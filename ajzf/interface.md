@@ -206,6 +206,34 @@ GET     /user/auth_info/
     }
 }
 ```
+##5、获取登录信息
+请求：
+```
+GET        /user/login_info/
+```
+响应：
+```
+正确1：
+登录过：
+{
+    'code': 200,
+    'msg': '操作成功',
+    'result': true,
+    'data': {
+        'id': 用户id,
+        'name': 用户名,
+        'phone': 手机号,
+        'avatar': 头像
+    }
+}
+正确2：
+未登录过：
+{
+    'code': 200,
+    'msg': '操作成功',
+    'result': false
+}
+```
 #房屋模块
 ##1、我的房源
 请求：
@@ -425,3 +453,141 @@ POST    /book/check_in/
     'amount': 总价
 }
 ```
+##3、我的订单页面
+请求：
+```
+GET     /book/my_orders/
+```
+响应：orders.html页面
+##4、我的订单列表
+请求：
+```
+GET     /book/my_orders_list/
+```
+响应：
+```
+正确：
+{
+    'code': 200,
+    'msg': '操作成功',
+    'data_list': [{
+        'order_id': 订单id,
+        'user_name': 用户名,
+        'house_title': 房源标题,
+        'image': 房源图片,
+        'create_date': 下单时间,
+        'begin_date': 入住时间,
+        'end_date': 退房时间,
+        'amount': 总价,
+        'days': 天数,
+        'status': 状态,
+        'comment': 评价或拒单理由
+    }]  订单列表
+}
+```
+##5、房主订单页面
+请求：
+```
+GET     /book/custom_orders/
+```
+响应：lorders.html页面
+##6、房主订单列表
+请求：
+```
+GET     /book/custom_orders_list/
+```
+响应：
+```
+正确：
+{
+    'code': 200,
+    'msg': '操作成功',
+    'data_list': [{
+        'order_id': 订单id,
+        'user_name': 用户名,
+        'house_title': 房源标题,
+        'image': 房源图片,
+        'create_date': 下单时间,
+        'begin_date': 入住时间,
+        'end_date': 退房时间,
+        'amount': 总价,
+        'days': 天数,
+        'status': 状态,
+        'comment': 评价或拒单理由
+    }]  订单列表
+}
+```
+##7、改变订单状态
+请求：
+```
+PATCH       /book/change_order_status/
+```
+响应：
+```
+错误1：
+{'code': 1201, 'msg': '请求参数不完整'}
+错误2：
+{'code': 1203, 'msg': '订单状态参数错误'}
+错误3：
+{'code': 0, 'msg': '数据库错误，请稍后重试'}
+正确：
+{'code': 200, 'msg': '操作成功'}
+```
+参数：
+```
+{
+    'oid': 订单id,
+    'status': 状态,
+    'comment': 评论或拒单理由（当状态为已完成或已拒单时不可空）
+}
+```
+#首页页面
+请求：
+```
+GET     /index/index/
+```
+响应：index.html页面
+#搜索
+##1、搜索页面
+请求：
+```
+GET     /index/search/
+```
+响应：search.html页面
+##2、搜索页面获取房源列表
+请求：
+```
+GET     /index/get_houses/
+```
+响应：
+```
+正确：
+{
+    'code': 200,
+    'msg': '操作成功',
+    'data_list': [{
+        'id': 房源id,
+        'user_avatar': 房主头像,
+        'user_name': 房主用户名,
+        'title': 房源标题,
+        'price': 单价,
+        'address': 详细地址,
+        'room_count': 房间数量,
+        'acreage': 房间面积,
+        'unit': 房源规格,
+        'capacity': 可容纳人数,
+        'beds': 床规格,
+        'deposit': 收取押金,
+        'min_days': 最少入住天数,
+        'max_days': 最多入住天数,
+        'order_count': 被订数量,
+        'images': [], 房源图片列表
+        'facilities': [{
+            'id': 设备id,
+            'name': 设备名,
+            'css': 设备图标
+        }], 房源设备列表
+    }]
+}
+```
+

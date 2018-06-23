@@ -8,6 +8,7 @@ book_blueprint = Blueprint('book', __name__)
 
 
 @book_blueprint.route('/booking/', methods=['GET'])
+@login_required
 def booking():
     return render_template('booking.html')
 

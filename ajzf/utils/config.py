@@ -14,7 +14,7 @@ class DevConfig(CommonConfig):
 
     # 将session中的数据保存到redis
     SESSION_TYPE = 'redis'
-    SESSION_REDIS = redis.Redis(host='127.0.0.1', port='6379')
+    SESSION_REDIS = redis.Redis(host='127.0.0.1', port='6379', password='yl@952001')
 
     # 数据库配置
     SQLALCHEMY_DATABASE_URI = '{}+{}://{}:{}@{}:{}/{}?charset=utf8'.format(
