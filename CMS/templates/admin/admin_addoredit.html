@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}管理员操作{% endblock %}
+
+{% block content %}
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>管理员：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="请输入管理员登录名" id="adminName" name="adminName">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>初始密码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="password" class="input-text" autocomplete="off" value="" placeholder="请输入密码" id="password" name="password">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>姓名：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="请输入姓名" id="realName" name="realName">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>角色：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <select class="select input-text" id="role" name="adminRole" size="1">
+
+                </select>
+             </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <button type="button" class="btn btn-success radius" id="admin-role-save"><i class="icon-ok"></i> 确定</button>
+            </div>
+        </div>
+        <div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <span id="result" class="c-red"></span>
+			</div>
+		</div>
+	</form>
+</article>
+
+{% endblock %}
+
+{% block JS %}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+$(function(){
+    $.getJSON('/api/role/0/', function (data) {
+        if(data.code == '200'){
+            var list = data.data_list;
+            var html = '<option value="">--请选择--</option>';
+            for(var i=0;i<list.length;i++) {
+                html += '<option value="'+list[i].id+'">'+list[i].name+'</option>';
+            }
+            $('#role').append(html);
+        }
+    });
+
+    adid = window.location.search.split('=')[1];
+    if(adid != '' && adid != undefined) {
+        $.getJSON('/api/admin/'+adid+'/', function (data) {
+            if(data.code == '200'){
+                $('#adminName').val(data.data.username);
+                $('#realName').val(data.data.name);
+                $('#password').val(data.data.password);
+                $('#role').val(data.data.role_id);
+            }
+        });
+    }
+
+	$('#admin-role-save').on('click', function (e) {
+        e.preventDefault();
+
+        var username = $('#adminName').val().trim();
+        var name = $('#realName').val().trim();
+        var password = $('#password').val().trim();
+        var rid = $('#role').val().trim();
+        if(username == ''){
+            $('#result').html('管理员登录名不能为空');
+            return;
+        }else if(password == ''){
+            $('#result').html('初始密码不能为空');
+            return;
+        }else if(name == ''){
+            $('#result').html('姓名不能为空');
+            return;
+        }else if(rid == ''){
+            $('#result').html('角色不能为空');
+            return;
+        }else {
+            $('#result').html('');
+        }
+
+        $.ajax({
+            url: '/api/admin/',
+            type: 'post',
+            data: {'adid': adid, 'username': username, 'password': password, 'name': name, 'rid': rid},
+            datatype: 'json',
+            success: function (data) {
+                if(data.code == '200'){
+                    layer.alert(data.msg);
+                    {#$('#result').html(data.msg);#}
+                }else {
+                    layer.alert('操作失败！' + data.msg);
+                    {#$('#result').html(data.msg);#}
+                }
+            },
+            error: function (error) {
+                layer.msg('请求失败!',{icon: 2, time: 1500});
+                console.log(error);
+            }
+        });
+    });
+
+});
+</script> 
+<!--/请在上方写此页面业务相关的脚本-->
+{% endblock %}

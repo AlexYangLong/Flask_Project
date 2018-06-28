@@ -1,0 +1,131 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}权限列表{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 管理员管理 <span class="c-gray en">&gt;</span> 权限管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace('/admin/auth_list/?pn=1&kw=');" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="text-c">
+		<form class="Huiform">
+			<input type="text" class="input-text" style="width:250px" placeholder="权限名称" id="searh_name">
+			<button type="button" class="btn btn-success" id="btn-search"><i class="Hui-iconfont">&#xe665;</i> 搜权限节点</button>
+		</form>
+	</div>
+	<div class="cl pd-5 bg-1 bk-gray mt-20">
+		<span class="l">
+			<a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>
+			<a href="javascript:;" onclick="admin_permission_add('添加权限节点','{{ url_for('admin.auth_add') }}','','310')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加权限节点</a>
+		</span>
+		<span class="r">共有数据：<strong></strong> 条</span>
+	</div>
+	<table class="table table-border table-bordered table-bg">
+		<thead>
+			<tr>
+				<th scope="col" colspan="7">权限节点</th>
+			</tr>
+			<tr class="text-c">
+				<th width="25"><input type="checkbox" name="" value=""></th>
+				<th width="40">ID</th>
+				<th width="200">权限名称</th>
+                <th width="200">父级</th>
+				<th>路由</th>
+				<th width="100">操作</th>
+			</tr>
+		</thead>
+		<tbody id="data_list">
+{#			<tr class="text-c">#}
+{#				<td><input type="checkbox" value="1" name=""></td>#}
+{#				<td>1</td>#}
+{#				<td>栏目添加</td>#}
+{#				<td></td>#}
+{#				<td>#}
+{#                    <a title="编辑" href="javascript:;" onclick="admin_permission_edit('角色编辑','auth_addoredit.html','1','','310')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>#}
+{#                    <a title="删除" href="javascript:;" onclick="admin_permission_del(this,'1')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>#}
+{#                </td>#}
+{#			</tr>#}
+		</tbody>
+	</table>
+</div>
+{% endblock %}
+
+{% block JS %}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript">
+
+$(function () {
+    search = window.location.search.split('?')[1]
+    pn = search.split('&')[0].split('=')[1]
+    kw = search.split('&')[1].split('=')[1]
+    $.getJSON('/api/auth/?pn='+pn+'&kw='+kw, function (data) {
+        if(data.code == '200'){
+            $('.r strong').html(data.rows_count);
+            var list = data.data_list;
+            var html = '';
+            for(var i=0;i<list.length;i++){
+                html += '<tr class="text-c">';
+                html += '<td><input type="checkbox" value="'+ list[i].id +'" name=""></td>';
+                html += '<td>'+ (i+1) +'</td>';
+                html += '<td>'+ list[i].name +'</td>';
+                html += '<td>'+ list[i].parent +'</td>';
+                html += '<td>'+ list[i].url +'</td>';
+                html += '<td><a title="编辑" href="javascript:;" onclick="admin_permission_edit(\'权限编辑\',\'/admin/auth_edit/?aid='+ list[i].id +'\',\''+ list[i].id +'\',\'\',\'310\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>';
+                html += '<a title="删除" href="javascript:;" onclick="admin_permission_del(this,'+ list[i].id +')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+            }
+            $('#data_list').append(html);
+        }
+    });
+
+    $('#btn-search').on('click', function (e) {
+        e.preventDefault();
+
+        var kw = $('#searh_name').val().trim();
+        if(kw == ""){
+            layer.msg('关键字不能为空', {icon: 2, time: 1500});
+            return;
+        }
+        window.location.href = '/admin/auth_list/?pn=1&kw='+kw;
+    })
+});
+
+/*
+	参数解释：
+	title	标题
+	url		请求的url
+	id		需要操作的数据id
+	w		弹出层宽度（缺省调默认值）
+	h		弹出层高度（缺省调默认值）
+*/
+/*管理员-权限-添加*/
+function admin_permission_add(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+/*管理员-权限-编辑*/
+function admin_permission_edit(title,url,id,w,h){
+	layer_show(title,url,w,h);
+}
+
+/*管理员-权限-删除*/
+function admin_permission_del(obj,id){
+	layer.confirm('确认要删除吗？',function(index){
+		$.ajax({
+			type: 'delete',
+			url: '/api/auth/'+ id + '/',
+			dataType: 'json',
+			success: function(data){
+			    if(data.code == '200') {
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!', {icon: 1, time: 1500});
+                }else {
+			        layer.msg('删除失败!', {icon: 2, time: 1500});
+                }
+			},
+			error:function(error) {
+			    layer.msg('请求失败!',{icon: 2, time: 1500});
+				console.log(error);
+			},
+		});		
+	});
+}
+</script>
+{% endblock %}

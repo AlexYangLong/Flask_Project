@@ -1,0 +1,109 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}权限操作{% endblock %}
+
+{% block content %}
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-role-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>权限名称：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="请输入权限名" id="auth_name" name="auth_name">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">路由：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" value="" placeholder="请输入路由" id="auth_url" name="auth_url">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">父级：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<select id="parent" class="input-text">
+{#                    <option value="">--请选择--</option>#}
+{#                    <option value="1">管理员管理</option>#}
+                </select>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button type="button" class="btn btn-success radius" id="admin-role-save"><i class="icon-ok"></i> 确定</button>
+			</div>
+		</div>
+        <div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <span id="result" class="c-red"></span>
+			</div>
+		</div>
+	</form>
+</article>
+{% endblock %}
+
+{% block JS %}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+$(function(){
+    $.getJSON('/api/auth/0/', function (data) {
+        if(data.code == '200'){
+            var list = data.data_list;
+            var html = '<option value="">--请选择--</option>';
+            for(var i=0;i<list.length;i++) {
+                html += '<option value="'+list[i].id+'">'+list[i].name+'</option>';
+            }
+            $('#parent').append(html);
+        }
+    });
+
+    aid = window.location.search.split('=')[1];
+    if(aid != '' && aid != undefined) {
+        $.getJSON('/api/auth/'+aid+'/', function (data) {
+            if(data.code == '200'){
+                $('#auth_name').val(data.data.name);
+                $('#auth_url').val(data.data.url);
+                $('#parent').val(data.data.parent_id);
+            }
+        });
+    }
+
+	$('#admin-role-save').on('click', function (e) {
+        e.preventDefault();
+
+        var name = $('#auth_name').val().trim();
+        var url = $('#auth_url').val().trim();
+        var pid = $('#parent').val().trim();
+        if(name == ''){
+            $('#result').html('权限名不能为空');
+            return;
+        }else {
+            $('#result').html('');
+        }
+
+        $.ajax({
+            url: '/api/auth/',
+            type: 'post',
+            data: {'aid': aid, 'name': name, 'url': url, 'pid': pid},
+            datatype: 'json',
+            success: function (data) {
+                if(data.code == '200'){
+                    layer.alert(data.msg);
+                    {#$('#result').html(data.msg);#}
+                }else {
+                    layer.alert('操作失败！' + data.msg);
+                    {#$('#result').html(data.msg);#}
+                }
+            },
+            error: function (error) {
+                layer.msg('请求失败!',{icon: 2, time: 1500});
+                console.log(error);
+            }
+        });
+    });
+
+});
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+{% endblock %}
