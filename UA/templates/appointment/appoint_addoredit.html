@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}预约操作{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 预约管理 <span class="c-gray en">&gt;</span> 预约操作</nav>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add">
+	<fieldset>
+        <legend style="margin-bottom: 0px;">客户信息</legend>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>客户：</label>
+            <div class="formControls col-xs-9 col-sm-10">
+                <input type="text" class="input-text" list="user_list" autocomplete="off" placeholder="客户姓名或手机" id="name" name="name">
+            </div>
+            <datalist id="user_list">
+
+            </datalist>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>手机号</label>
+            <div class="formControls col-xs-9 col-sm-10">
+                <input type="text" class="input-text" autocomplete="off" placeholder="手机号" id="phone" name="phone">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"> 邮箱：</label>
+            <div class="formControls col-xs-9 col-sm-10">
+                <input type="text" class="input-text" autocomplete="off" placeholder="邮箱" id="email" name="email">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"> 地址：</label>
+            <div class="formControls col-xs-9 col-sm-10">
+                <input type="text" class="input-text" autocomplete="off" placeholder="地址" id="address" name="address">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"> 来由：</label>
+            <div class="formControls col-xs-9 col-sm-10">
+                <input type="text" class="input-text" placeholder="来由" id="reason" name="reason">
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend style="margin-bottom: 0px;">预约时间</legend>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"> 时间区间：</label>
+            <div class="formControls col-xs-9 col-sm-10">
+                <input type="text" onfocus="WdatePicker({minDate:'%y-%M-%d', dateFmt:'yyyy-MM-dd HH:mm:ss',alwaysUseStartDate:true})" id="datemin" class="input-text Wdate" style="width:160px;">
+                -
+                <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'datemin\')}', maxDate:'%y-%M-{\%d+1}', dateFmt:'yyyy-MM-dd HH:mm:ss',alwaysUseStartDate:true})" id="datemax" class="input-text Wdate" style="width:160px;">
+            </div>
+        </div>
+        </fieldset>
+        <div class="row cl">
+            <div class="col-xs-4 col-sm-3 col-xs-offset-3 col-sm-offset-2">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-4 col-sm-3 col-xs-offset-3 col-sm-offset-2">
+                <span id="result" class="c-red"></span>
+            </div>
+        </div>
+	</form>
+</article>
+{% endblock %}
+
+{% block JS %}
+<!--请在下方写此页面业务相关的脚本-->
+{#<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/jquery.validate.js"></script>#}
+{#<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/validate-methods.js"></script>#}
+{#<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/messages_zh.js"></script>#}
+<script type="text/javascript" src="/static/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript">
+$(function(){
+    $.getJSON('/api/user/0/', function (data) {
+        if(data.code == '200'){
+            var list = data.data_list;
+            var html = '';
+            for(var i=0;i<list.length;i++){
+                html += '<option label="'+list[i].name+'|'+list[i].phone+'" value="'+list[i].name+'|'+list[i].phone+'|'+list[i].email+'|'+list[i].address+'" />';
+            }
+            $('#user_list').append(html);
+        }
+    });
+
+	apid = window.location.search.split('=')[1];
+    if(apid != '' && apid != undefined) {
+        $.getJSON('/api/appoint/'+apid+'/', function (data) {
+            if(data.code == '200'){
+                $('#name').val(data.data.user.name);
+                $('#phone').val(data.data.user.phone);
+                $('#email').val(data.data.user.email);
+                $('#address').val(data.data.user.address);
+                $('#reason').val(data.data.user.reason);
+                $('#datemin').val(data.data.start_time);
+                $('#datemax').val(data.data.end_time);
+            }
+        });
+    }
+
+    // 当#name输入框的值发生改变时，判断是否因为选中了datalist引起的，若是，则将客户姓名、电话、邮箱、地址补全
+    $('#name').change(function (e) {
+        e.preventDefault();
+        var txt = $('#name').val().trim();
+        var $options=$("#user_list").children();
+        for(var i=0;i<$options.length;i++){
+            if($options.eq(i).val().trim()==txt){
+                {#$("#result").text($options.eq(i).attr("data-id"));#}
+                var txt_list = txt.split('|');
+                $('#name').val(txt_list[0]);
+                $('#phone').val(txt_list[1]);
+                $('#email').val(txt_list[2]);
+                $('#address').val(txt_list[3]);
+                break;
+            }
+        }
+    });
+
+	$('.btn-primary').on('click', function (e) {
+        e.preventDefault();
+
+        var name = $('#name').val().trim();
+        var phone = $('#phone').val().trim();
+        var email = $('#email').val().trim();
+        var address = $('#address').val().trim();
+        var reason = $('#reason').val().trim();
+        var st = $('#datemin').val().trim();
+        var et = $('#datemax').val().trim();
+        if(name == ''){
+            $('#result').html('客户姓名不能为空');
+            return;
+        }else if(phone == ''){
+            $('#result').html('手机号不能为空');
+            return;
+        }else if(phone == ''){
+            $('#result').html('开始时间不能为空');
+            return;
+        }else if(phone == ''){
+            $('#result').html('结束时间不能为空');
+            return;
+        }else {
+            $('#result').html('');
+        }
+
+        if(apid != '' && apid != undefined){
+            var ajax_type = 'put';
+            var ajax_url = '/api/appoint/'+ apid + '/';
+        }else {
+            var ajax_type = 'post';
+            var ajax_url = '/api/appoint/';
+        }
+
+        $.ajax({
+            url: ajax_url,
+            type: ajax_type,
+            data: {'name': name, 'phone': phone, 'email': email, 'address': address, 'reason': reason, 'st': st, 'et': et},
+            datatype: 'json',
+            success: function (data) {
+                if(data.code == '200'){
+                    layer.alert(data.msg);
+                    {#$('#result').html(data.msg);#}
+                }else {
+                    layer.alert('操作失败！' + data.msg);
+                    {#$('#result').html(data.msg);#}
+                }
+            },
+            error: function (error) {
+                layer.msg('请求失败!',{icon: 2, time: 1500});
+                console.log(error);
+            }
+        });
+    });
+});
+</script> 
+<!--/请在上方写此页面业务相关的脚本-->
+{% endblock %}

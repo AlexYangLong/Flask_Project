@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}欢迎界面{% endblock %}
+
+{% block content %}
+<div class="page-container">
+	<p class="f-20 text-success">欢迎使用预约后台管理系统 <span class="f-14">v1.0</span>后台模版！</p>
+	<p>登录次数：{{ login_count }} </p>
+    {% if last_login_record %}
+        <p>上次登录IP：{{ last_login_record.login_ip }}  上次登录时间：{{ last_login_record.login_time }}</p>
+    {% else %}
+        <p>第一次登录本系统 =) </p>
+    {% endif %}
+
+</div>
+{% endblock %}

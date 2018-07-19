@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}用户操作{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 用户管理 <span class="c-gray en">&gt;</span> 用户操作</nav>
+<article class="page-container">
+	<form class="form form-horizontal" id="form-admin-add">
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>姓名：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" placeholder="用户姓名" id="name" name="name">
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>手机：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" value="" placeholder="手机号" id="phone" name="phone">
+		</div>
+	</div>
+	<div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"> 邮箱：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" placeholder="邮箱" name="email" id="email">
+		</div>
+	</div>
+    <div class="row cl">
+		<label class="form-label col-xs-4 col-sm-3"> 地址：</label>
+		<div class="formControls col-xs-8 col-sm-9">
+			<input type="text" class="input-text" placeholder="地址" name="address" id="address">
+		</div>
+	</div>
+	<div class="row cl">
+		<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+			<input class="btn btn-primary radius" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+		</div>
+	</div>
+        <div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <span id="result" class="c-red"></span>
+			</div>
+		</div>
+	</form>
+</article>
+{% endblock %}
+
+{% block JS %}
+<!--请在下方写此页面业务相关的脚本-->
+{#<script type="text/javascript" src="lib/jquery.validation/1.14.0/jquery.validate.js"></script> #}
+{#<script type="text/javascript" src="lib/jquery.validation/1.14.0/validate-methods.js"></script> #}
+{#<script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.js"></script> #}
+<script type="text/javascript">
+$(function(){
+    uid = window.location.search.split('=')[1];
+    if(uid != '' && uid != undefined) {
+        $.getJSON('/api/user/'+uid+'/', function (data) {
+            if(data.code == '200'){
+                $('#name').val(data.data.name);
+                $('#phone').val(data.data.phone);
+                $('#email').val(data.data.email);
+                $('#address').val(data.data.address);
+            }
+        });
+    }
+
+	$('.btn-primary').on('click', function (e) {
+        e.preventDefault();
+
+        var name = $('#name').val().trim();
+        var phone = $('#phone').val().trim();
+        var email = $('#email').val().trim();
+        var address = $('#address').val().trim();
+        if(name == ''){
+            $('#result').html('姓名不能为空');
+            return;
+        }else if(phone == ''){
+            $('#result').html('手机号不能为空');
+            return;
+        }else {
+            $('#result').html('');
+        }
+
+        if(uid != '' && uid != undefined){
+            var ajax_type = 'put';
+            var ajax_url = '/api/user/'+ uid + '/';
+        }else {
+            var ajax_type = 'post';
+            var ajax_url = '/api/user/';
+        }
+
+        $.ajax({
+            url: ajax_url,
+            type: ajax_type,
+            data: {'name': name, 'phone': phone, 'email': email, 'address': address},
+            datatype: 'json',
+            success: function (data) {
+                if(data.code == '200'){
+                    layer.alert(data.msg);
+                    {#$('#result').html(data.msg);#}
+                }else {
+                    layer.alert('操作失败！' + data.msg);
+                    {#$('#result').html(data.msg);#}
+                }
+            },
+            error: function (error) {
+                layer.msg('请求失败!',{icon: 2, time: 1500});
+                console.log(error);
+            }
+        });
+    });
+});
+</script> 
+<!--/请在上方写此页面业务相关的脚本-->
+{% endblock %}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>上传图片</title>
+    <style>
+        .img_list{
+            margin-top: 20px;
+            width: 800px;
+            background-color: azure;
+        }
+        .img_box{
+            width: 190px;
+            height: 200px;
+            float: left;
+            margin: 0 5px;
+        }
+        .img_box img{
+            width: 190px;
+        }
+    </style>
+</head>
+<body>
+    <form enctype="multipart/form-data" id="form-img">
+        <input type="file" name="img" multiple="multiple"><br>
+        <input type="submit" value="上传" />
+    </form>
+
+    <div class="img_list">
+        <!-- 这些图片用于测试 -->
+        <div class="img_box">
+            <img src="/static/img/no-house-img.png">
+            <div><a href="javascript:void(0);" onclick="delete_img(this, 1)">删除</a></div>
+        </div>
+        <div class="img_box">
+            <img src="/static/img/no-house-img.png">
+            <div><a href="javascript:void(0);" onclick="delete_img(this, 1)">删除</a></div>
+        </div>
+        <div class="img_box">
+            <img src="/static/img/no-house-img.png">
+            <div><a href="javascript:void(0);" onclick="delete_img(this, 1)">删除</a></div>
+        </div>
+        <div class="img_box">
+            <img src="/static/img/no-house-img.png">
+            <div><a href="javascript:void(0);" onclick="delete_img(this, 1)">删除</a></div>
+        </div>
+        <div class="img_box">
+            <img src="/static/img/no-house-img.png">
+            <div><a href="javascript:void(0);" onclick="delete_img(this, 1)">删除</a></div>
+        </div>
+        <div class="img_box">
+            <img src="/static/img/no-house-img.png">
+            <div><a href="javascript:void(0);" onclick="delete_img(this, 1)">删除</a></div>
+        </div>
+        <div class="img_box">
+            <img src="/static/img/no-house-img.png">
+            <div><a href="javascript:void(0);" onclick="delete_img(this, 1)">删除</a></div>
+        </div>
+        <div class="img_box">
+            <img src="/static/img/no-house-img.png">
+            <div><a href="javascript:void(0);" onclick="delete_img(this, 1)">删除</a></div>
+        </div>
+        <div class="img_box">
+            <img src="/static/img/no-house-img.png">
+            <div><a href="javascript:void(0);" onclick="delete_img(this, 1)">删除</a></div>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+</body>
+</html>
+<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.form.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#form-img').submit(function (e) {
+        e.preventDefault();
+
+        $(this).ajaxSubmit({
+            url: '/img/img/',  // c操作上传图片的url
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                // 回调函数中判断处理结果是否是200
+                // 返回的json格式：{'code': 200, 'msg': '操作成功', 'img_list': '图片保存的路径'}
+                if (data.code == '200') {
+                    var html = '';
+                    for(var i=0;i<data.img_list.length;i++){
+                        html += '<div class="img_box">';
+                        html += '<img src="'+data.img_list[i]+'">';
+                        // 这里需要修改，将图片的 id 传入 delete_img(this, id) 函数中
+                        html += '<div><a href="javascript:void(0);" onclick="delete_img(this, 1)">删除</a></div>';
+                        html += '</div>';
+                    }
+                    $('.img_list').append(html);
+
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (error) {
+                alert('请求失败！');
+                console.log(error);
+            }
+        });
+    });
+});
+
+function delete_img(obj, img_id) {
+    alert(img_id);
+    // 这里只在前端删除了图片，但是没有在后端删除以及服务器本地删除
+    $(obj).parent().parent().remove();
+    alert('OK');
+}
+</script>

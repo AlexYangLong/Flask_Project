@@ -1,0 +1,163 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}预约列表{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 预约管理 <span class="c-gray en">&gt;</span> 预约列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="text-c"> 日期范围：
+		<input type="text" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',alwaysUseStartDate:true})" id="datemin" class="input-text Wdate" style="width:160px;" autocomplete="off">
+		-
+		<input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'datemin\')}', dateFmt:'yyyy-MM-dd HH:mm:ss',alwaysUseStartDate:true})" id="datemax" class="input-text Wdate" style="width:160px;" autocomplete="off">
+		<input type="text" class="input-text" style="width:250px" placeholder="用户姓名" id="search_key" name="">
+		<button type="submit" class="btn btn-success" id="search_btn"><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+	</div>
+	<div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l">
+{#            <a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> #}
+            <a href="javascript:;" onclick="appoint_add('添加预约','/appoint/appoint_add/','800','585')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加预约</a>
+        </span>
+        <span class="r">共有数据：<strong></strong> 条</span> </div>
+	<table class="table table-border table-bordered table-bg">
+		<thead>
+			<tr>
+				<th scope="col" colspan="9">预约列表</th>
+			</tr>
+			<tr class="text-c">
+				<th width="25"><input type="checkbox" name="" value=""></th>
+				<th width="40">序号</th>
+				<th>预约时间</th>
+				<th width="100">预约用户</th>
+				<th width="100">接约人</th>
+				<th width="130">创建时间</th>
+				<th width="100">操作</th>
+			</tr>
+		</thead>
+		<tbody id="data_list">
+{#			<tr class="text-c">#}
+{#				<td><input type="checkbox" value="1" name=""></td>#}
+{#				<td>1</td>#}
+{#				<td>admin</td>#}
+{#				<td>13000000000</td>#}
+{#				<td>超级管理员</td>#}
+{#				<td>2014-6-11 11:11:42</td>#}
+{#				<td class="td-manage"><a style="text-decoration:none" onClick="admin_stop(this,'10001')" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a> <a title="编辑" href="javascript:;" onclick="admin_edit('管理员编辑','admin-add.html','1','800','500')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="admin_del(this,'1')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>#}
+{#			</tr>#}
+		</tbody>
+	</table>
+    <div id="page" style="float: right; margin-top: 10px;"></div>
+</div>
+{% endblock %}
+
+{% block JS %}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/lib/My97DatePicker/4.8/WdatePicker.js"></script>
+{#<script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script> #}
+<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+
+$(function () {
+    var search = window.location.search;
+    {#alert(search)#}
+    pn = search.split('&')[0].split('=')[1];
+    sd = search.split('&')[1].split('=')[1];
+    ed = search.split('&')[2].split('=')[1];
+    sk = search.split('&')[3].split('=')[1];
+    if(sd != '' && sd != undefined){
+        $('#datemin').val(decodeURI(sd));
+    }
+    if(ed != '' && ed != undefined){
+        $('#datemax').val(decodeURI(ed));
+    }
+    if(sk != '' && sk != undefined){
+        $('#search_key').val(decodeURI(sk));
+    }
+
+    $.getJSON('/api/appoint/?pn=' + pn + '&sd=' + sd + '&ed=' + ed + '&sk=' + sk, function (data) {
+        if(data.code == '200'){
+            var html = '';
+            var list = data.data_list;
+            for(var i=0;i<list.length;i++){
+                html += '<tr class="text-c">';
+                html += '<td><input type="checkbox" value="'+list[i].id+'" name=""></td>';
+                html += '<td>'+((data.page_now - 1) * data.page_size +(i+1))+'</td>';
+                html += '<td>'+list[i].start_time+' - '+list[i].end_time+'</td>';
+                html += '<td>'+list[i].user.name+'</td>';
+                html += '<td>'+list[i].admin.name+'</td>';
+                html += '<td>'+list[i].create_time+'</td>';
+
+                html += '<td><a title="编辑" href="javascript:;" onclick="appoint_edit(\'编辑预约\',\'/appoint/appoint_edit/?apid='+list[i].id+'\',\'1\',\'800\',\'585\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>';
+                html += '<a title="删除" href="javascript:;" onclick="appoint_del(this,'+list[i].id+')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td></tr>';
+            }
+
+            $('#data_list').append(html);
+            $('.r strong').html(data.rows_count);
+
+            laypage({
+                cont: 'page', //容器。值支持id名、原生dom对象，jquery对象。【如该容器为】：<div id="page1"></div>
+                pages: data.page_total, //通过后台拿到的总页数
+                curr: data.page_now || 1, //当前页
+                jump: function(obj, first){ //触发分页后的回调
+                    if(!first){ //点击跳页触发函数自身，并传递当前页：obj.curr
+                        window.location.href = '/appoint/appoint_list/?pn=' + obj.curr + '&sd=' + sd + '&ed=' + ed + '&sk=' + sk;
+                    }
+                }
+            });
+        }else {
+
+        }
+    });
+
+    $('#search_btn').on('click', function (e) {
+        e.preventDefault();
+
+        var st = $('#datemin').val().trim();
+        var et = $('#datemax').val().trim();
+        var kw = $('#search_key').val().trim();
+        if(st == '' && et == '' && kw == ''){
+            layer.msg('搜索关键字不能为空！', {icon: 2, time: 1500});
+            return;
+        }
+        window.location.href = '/appoint/appoint_list/?pn=1&sd=' + st + '&ed=' + et + '&sk=' + kw;
+    });
+});
+
+/*
+	参数解释：
+	title	标题
+	url		请求的url
+	id		需要操作的数据id
+	w		弹出层宽度（缺省调默认值）
+	h		弹出层高度（缺省调默认值）
+*/
+/*管理员-增加*/
+function appoint_add(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+/*管理员-删除*/
+function appoint_del(obj,id){
+	layer.confirm('确认要删除吗？',function(index){
+		$.ajax({
+			type: 'delete',
+			url: '/api/appoint/' + id +'/',
+			dataType: 'json',
+			success: function(data){
+			    layer.msg('已删除!',{icon:1,time:1500});
+			    window.location.href = '/appoint/appoint_list/?pn=' + pn + '&sd=' + sd + '&ed=' + ed + '&sk=' + sk;
+				{#$(obj).parents("tr").remove();#}
+
+			},
+			error:function(data) {
+			    layer.msg('请求失败!',{icon:2,time:2000});
+				console.log(data.msg);
+			},
+		});
+	});
+}
+
+/*管理员-编辑*/
+function appoint_edit(title,url,id,w,h){
+	layer_show(title,url,w,h);
+}
+</script>
+{% endblock %}
